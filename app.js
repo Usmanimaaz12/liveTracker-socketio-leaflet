@@ -11,11 +11,15 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  res.send("index");
+  res.render("index.ejs");
 });
 
 io.on("connection", (socket) => {
   console.log("New client connected", socket.id);
+  socket.on("send-location", (data) => {
+    console.log("Location received:", data);
+    io.emit("new-location", data);
+  });
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

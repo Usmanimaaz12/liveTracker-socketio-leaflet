@@ -18,9 +18,10 @@ io.on("connection", (socket) => {
   console.log("New client connected", socket.id);
   socket.on("send-location", (data) => {
     console.log("Location received:", data);
-    io.emit("new-location", data);
+    io.emit("new-location", { id: socket.id, ...data });
   });
   socket.on("disconnect", () => {
+    io.emit("user-disconnected", { id: socket.id });
     console.log("Client disconnected");
   });
 });

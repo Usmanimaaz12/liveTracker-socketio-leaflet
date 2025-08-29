@@ -2,13 +2,25 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 const path = require("path");
+const mime = require("mime-types");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
 app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public")));
+
+// Configure static file serving with proper MIME types
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    setHeaders: (res, filePath) => {
+      const mimeType = mime.lookup(filePath);
+      if (mimeType) {
+        res.setHeader("Content-Type", mimeType);
+      }
+    },
+  })
+);
 
 app.get("/", (req, res) => {
   res.render("index.ejs");
